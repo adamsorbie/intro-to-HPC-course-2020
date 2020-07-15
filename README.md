@@ -101,13 +101,53 @@ Play around with these examples and those in the linked course for 5 minutes or 
 
 To access the Linux cluster we will be using ssh (Note: those of you who do not have an account with LRZ will be unable to do this themselves but I will explain how to do this on my machine). 
 
-### First time set-up
+## First time set-up
 
+These are the nodes you are likely to use to login. 
+
+| Command  | Login Node |
+|---------------|-------|
+| ssh -Y lxlogin1.lrz.de -l <user> | Haswell (CoolMUC-2) login node |
+| ssh -Y lxlogin2.lrz.de -l <user> | Haswell (CoolMUC-2) login node |
+| ssh -Y lxlogin3.lrz.de -l <user> | Haswell (CoolMUC-2) login node |
+| ssh -Y lxlogin4.lrz.de -l <user> | Haswell (CoolMUC-2) login node |
+
+Important info from LRZ!!!!! 
+
+"The login nodes are meant for preparing your jobs, developing your programs, and as a gateway for copying data from your own computer to the cluster and back again. Since this resource is shared among many users, LRZ requires that you do not start any long-running or memory-hogging programs on these nodes; production runs should use batch jobs that are submitted to the SLURM scheduler. Our SLURM configuration also supports semi-interactive testing. Violation of the usage restrictions on the login nodes may lead to your account being blocked from further access to the cluster, apart from your processes being forcibly removed by LRZ administrative staff!"
+
+Additionally, the following steps are super important to make sure your connection is secure. Multiple HPC centres across Europe were hacked recently, including the LRZ so it's important to follow these steps carefully. 
+
+First of all we need to generate an SSH-key to be able to access the LRZ system from outside. 
+
+Run the following command and press enter
+
+```
+ssh-keygen -t ecdsa -b 521 -a 100
+```
+
+You will be prompted to enter a passphrase , you __must__ enter something, ideally a long sentence which is memorable for you. 
+
+If you set up an account with the LRZ then enter the following 
+
+```
+ssh-copy-id -i /home/myaccount/.ssh/id_ecdsa <user>@<targetsystem>
+```
+
+If you want you can also run the next command which will allow prompt you to enter your passphrase then subsequently allow you to execute ssh commands without reauthenticating (in the same session, i.e. if you close your terminal then restart you will need to reauthenticate). 
+
+```
+ssh-add
+```
 
 ## Accessing installed software and submitting jobs 
 
 
-## Responsible use 
 
 
-## Extra: Rstudio server 
+## Reponsible use 
+
+
+## Rstudio server 
+
+This will likely be the most useful service for many of you. 
