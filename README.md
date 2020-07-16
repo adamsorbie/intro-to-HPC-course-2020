@@ -3,7 +3,7 @@ Introduction to HPC/working on the LRZ linux cluster
 
 Some material adapted from: HPC Carpentry - https://hpc-carpentry.github.io/hpc-intro/
 
-This course is an introduction to working in an HPC environment and will cover why we use this and the basics of, such as logging in and submitting jobs.
+This course is an introduction to working in an HPC environment and will cover why we use this and the basics of logging in and submitting jobs.
 
 ## What is a cluster? 
 
