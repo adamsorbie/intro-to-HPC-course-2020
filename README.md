@@ -1,6 +1,8 @@
 # intro-to-HPC-course-2020
 Introduction to HPC/working on the LRZ linux cluster
 
+Some material adapted from: HPC Carpentry - https://hpc-carpentry.github.io/hpc-intro/
+
 This course is an introduction to working in an HPC environment and will cover why we use this and the basics of, such as logging in and submitting jobs.
 
 ## What is a cluster? 
@@ -142,7 +144,91 @@ ssh-add
 
 ## Accessing installed software and submitting jobs 
 
+On high-performance computing systems, it is often the case that no software is loaded by default. If we want to use a particular package, we will usually need to “load” it ourselves.
 
+Before we start using individual software packages, it's important to understand the reasoning behind this approach. The three biggest factors are:
+
+software incompatibilities
+versioning
+dependencies
+
+
+Software incompatibility is a major problem for programmers and bioinformaticians alike. Sometimes the presence (or absence) of a package will break others that depend on it.  
+
+Software versioning is another common issue. You might depend on a particular version of a package for an analysis you are doing - if the software version changes (for instance, if a package was updated), it might affect your results. This sort of thing happens all the time and can be especially problematic in R. Having access to multiple software versions allows you to prevent issues with software versioning from affecting your results.
+
+Dependencies are where a particular software package (or even a particular version) depends on having access to another software package (or even a particular version of another software package). If the package your package depends on is not there or is the wrong version, then it may not work. 
+
+The solution to this on HPC systems is Environment modules. These are software packages which allow you to dynamically modify the environment you are working in. We need to take a little quick detour to understand this better. When you type a command on a unix system (excluding builtins like cd and echo) the shell searches for it in your path. If it finds it then the command will run, otherwise the shell will return an error. 
+
+To see what is currently in your path variable type the following command:
+
+```
+$ echo $PATH
+```
+
+Since hundreds or thousands of researchers are using the Linux cluster and all have different software needs, it would be really messy for everything to be installed and available at once, the output of ```$ echo $PATH``` would be pages and pages long. Environment modules manage this problem by dynamically adding packages to your path making sure you only have what you need. 
+
+When logging to the linux cluster you start with only a few modules preloaded. For those of us who have access to the cluster, let's login now and explore this a little further. 
+
+Type the following command to see what these are: 
+
+```
+$ module list
+```
+
+You should see something like the following:
+
+```
+Currently Loaded Modulefiles:
+ 1) admin/1.0     3) lrz/1.0                5) intel/19.0.5           7) intel-mpi/2019.7.217
+ 2) tempdir/1.0   4) spack/staging/20.1.1   6) intel-mkl/2019.5.281
+```
+
+You can also type ``` $ echo $PATH``` to check what's already in your path variable. 
+
+To see what modules are available we can type: 
+
+```
+module avail
+```
+
+You will notice there is a few pages of packages listed, including different versions of the same software. Let's go ahead and load python. 
+
+```
+module load python
+```
+
+Note: There are multiple versions of python installed, if you do not specify a version it will just load the default. 
+
+Now let's check our path to see if python is now included there (here we pipe the output of echo to grep and search for python to make it easier to see)
+
+```
+$ echo $PATH | grep python
+```
+
+To unload a package we can type ```module unload <module>``` Let's unload python. 
+
+```
+module unload python
+```
+
+
+In the last few years, some effors have been made to manage packages a little better. These efforts are mostly focused on non-HPC systems but will still be useful for you if you are working on the cluster and need to install something that isn't available in the listed modules. Since you obviously don't have administrator (Root on unix systems) privileges you generally can't install packages in the default location. To get around we can use the package manager conda. Conda is software tool which allows you create separate environments yourself and manage versions and dependencies. It's not perfect but it definitely makes managing packages a lot easier. 
+
+We will install and create a PICRUSt2 environment here as an example. 
+
+First we need to load the python module so we have access to conda 
+
+```
+module load python
+```
+
+Install PICRUSt2 using conda 
+
+```
+conda create -n picrust2 -c bioconda -c conda-forge picrust2=2.3.0_b python=3.6
+```
 
 
 ## Reponsible use 
