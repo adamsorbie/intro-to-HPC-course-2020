@@ -5,6 +5,23 @@ Some material adapted from: HPC Carpentry - https://hpc-carpentry.github.io/hpc-
 
 This course is an introduction to working in an HPC environment and will cover why we use this and the basics of logging in and submitting jobs.
 
+- [intro-to-HPC-course-2020](#intro-to-hpc-course-2020)
+  * [What is a cluster?](#what-is-a-cluster-)
+    + [Difference between cloud computing and a cluster](#difference-between-cloud-computing-and-a-cluster)
+    + [Why use a cluster?](#why-use-a-cluster-)
+  * [Practical](#practical)
+  * [Refresher: Working on a Unix system](#refresher--working-on-a-unix-system)
+    + [Finding your way around](#finding-your-way-around)
+  * [Access and login](#access-and-login)
+  * [First time set-up](#first-time-set-up)
+  * [Accessing installed software and submitting jobs](#accessing-installed-software-and-submitting-jobs)
+    + [Submitting jobs and writing batch scripts](#submitting-jobs-and-writing-batch-scripts)
+    + [Exercise](#exercise)
+    + [Uploading files to the cluster](#uploading-files-to-the-cluster)
+    + [Downloading files](#downloading-files)
+  * [Reponsible use](#reponsible-use)
+  * [Rstudio server](#rstudio-server)
+
 
 ## What is a cluster? 
 
@@ -400,7 +417,7 @@ Again do not run batch jobs on the login node. Never.
 Although in our case we do not pay for our usage, be mindful of the amount of compute time you request. The LRZ has guidelines [here](https://doku.lrz.de/display/PUBLIC/Guidelines+for+resource+selection). Even after reading these it still might be difficult to figure out how much memory or time you need. 
 Unless you have ran a job a few times it's very difficult to know how much you will need. What you can do however is when initially submiting job you can allocate more time than you think you will need just in case then use the output to check memory and time and edit your subsequent submissions accordingly you can do this with the ```sacct``` command. 
 
-``
+``` 
 sacct -M clustername -j JOBID -o jobid, partition, user, start, end, elapsed, maxrss
 
 ```
