@@ -10,18 +10,17 @@ This course is an introduction to working in an HPC environment and will cover w
     + [Difference between cloud computing and a cluster](#difference-between-cloud-computing-and-a-cluster)
     + [Why use a cluster?](#why-use-a-cluster-)
   * [Practical](#practical)
-  * [Refresher: Working on a Unix system](#refresher--working-on-a-unix-system)
+    + [Refresher: Working on a Unix system](#refresher--working-on-a-unix-system)
     + [Finding your way around](#finding-your-way-around)
-  * [Access and login](#access-and-login)
-  * [First time set-up](#first-time-set-up)
-  * [Accessing installed software and submitting jobs](#accessing-installed-software-and-submitting-jobs)
+    + [Access and login](#access-and-login)
+    + [First time set-up](#first-time-set-up)
+    + [Accessing installed software and submitting jobs](#accessing-installed-software-and-submitting-jobs)
     + [Submitting jobs and writing batch scripts](#submitting-jobs-and-writing-batch-scripts)
     + [Exercise](#exercise)
     + [Uploading files to the cluster](#uploading-files-to-the-cluster)
     + [Downloading files](#downloading-files)
   * [Reponsible use](#reponsible-use)
   * [Rstudio server](#rstudio-server)
-
 
 ## What is a cluster? 
 
