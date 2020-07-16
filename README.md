@@ -53,7 +53,7 @@ Shotgun and RNAseq in most cases, requires access to very powerful hardware as d
 
 ## Practical 
 
-## Refresher: Working on a Unix system 
+### Refresher: Working on a Unix system 
 
 Hopefully you have taken (or at least had a quick look at) the previous course I did: https://github.com/adamsorbie/unix_shell_course-2020-02-14
 
@@ -117,11 +117,11 @@ Output on my machine:
 ```
 Play around with these examples and those in the linked course for 5 minutes or so until you feel comfortable with these concepts. 
 
-## Access and login 
+### Access and login 
 
 To access the Linux cluster we will be using ssh (Note: those of you who do not have an account with LRZ will be unable to do this themselves but I will explain how to do this on my machine). 
 
-## First time set-up
+### First time set-up
 
 These are the nodes you are likely to use to login. 
 
@@ -162,7 +162,7 @@ $ ssh-add
 
 Those of you who have access should login to the cluster now. 
 
-## Accessing installed software and submitting jobs 
+### Accessing installed software and submitting jobs 
 
 On high-performance computing systems, it is often the case that no software is loaded by default. If we want to use a particular package, we will usually need to “load” it ourselves.
 
