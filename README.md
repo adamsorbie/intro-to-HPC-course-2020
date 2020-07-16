@@ -125,7 +125,7 @@ First of all we need to generate an SSH-key to be able to access the LRZ system 
 Run the following command and press enter
 
 ```
-ssh-keygen -t ecdsa -b 521 -a 100
+$ ssh-keygen -t ecdsa -b 521 -a 100
 ```
 
 You will be prompted to enter a passphrase , you __must__ enter something, ideally a long sentence which is memorable for you. 
@@ -133,13 +133,13 @@ You will be prompted to enter a passphrase , you __must__ enter something, ideal
 If you set up an account with the LRZ then enter the following 
 
 ```
-ssh-copy-id -i /home/myaccount/.ssh/id_ecdsa <user>@<targetsystem>
+$ ssh-copy-id -i /home/myaccount/.ssh/id_ecdsa <user>@<targetsystem>
 ```
 
 If you want you can also run the next command which will allow prompt you to enter your passphrase then subsequently allow you to execute ssh commands without reauthenticating (in the same session, i.e. if you close your terminal then restart you will need to reauthenticate). 
 
 ```
-ssh-add
+$ ssh-add
 ```
 
 ## Accessing installed software and submitting jobs 
@@ -190,13 +190,13 @@ You can also type ``` $ echo $PATH``` to check what's already in your path varia
 To see what modules are available we can type: 
 
 ```
-module avail
+$ module avail
 ```
 
 You will notice there is a few pages of packages listed, including different versions of the same software. Let's go ahead and load python. 
 
 ```
-module load python
+$ module load python
 ```
 
 Note: There are multiple versions of python installed, if you do not specify a version it will just load the default. 
@@ -210,7 +210,7 @@ $ echo $PATH | grep python
 To unload a package we can type ```module unload <module>``` Let's unload python. 
 
 ```
-module unload python
+$ module unload python
 ```
 
 
@@ -221,13 +221,76 @@ We will install and create a PICRUSt2 environment here as an example.
 First we need to load the python module so we have access to conda 
 
 ```
-module load python
+$ module load python
 ```
 
 Install PICRUSt2 using conda 
 
 ```
-conda create -n picrust2 -c bioconda -c conda-forge picrust2=2.3.0_b python=3.6
+$ conda create -n picrust2 -c bioconda -c conda-forge picrust2=2.3.0_b python=3.6
+```
+
+To activate your new environment run 
+
+```
+$ source activate picrust2
+```
+
+Note: On newer versions of conda the command is ``$ conda activate <env>```
+
+In my experience, most packages I need to use are not available as modules and need to be installed via conda. 
+
+### Submitting jobs and writing batch scripts
+
+Let's move on now to submitting jobs using the SLURM scheduler. In most use cases (at least for us), submitted scripts resemble bash scripts with an extra few lines at the top which tell SLURM which cluster and partition to use and how much memory you need etc. Below is an annotated example of a script I wrote recently to run RAXML, a program for inference of phylogenetic trees. 
+
+We won't actually write and submit our own jobs today but let's go through this script line by line so you can understand what everything does. Before running your own scripts you should refer to LRZ [documentation](https://doku.lrz.de/display/PUBLIC/Running+serial+jobs+on+the+Linux-Cluster)
+
+```
+#!/bin/bash 
+
+## These are the extra lines required for the SLURM scheduler
+#SBATCH -J "raxml_ref_tree" ## job name
+#SBATCH -D ./ ## working directory
+#SBATCH -o ./%x.%j.%N.out ## writes out error logs, %x encodes job name, %j job ID and %N the master node 
+#SBATCH --get-user-env ## Sets the user environment properly
+#SBATCH --clusters=serial ## cluster to run the job on
+#SBATCH --partition=serial_std ## which partition of the above cluster to use (each cluster has different partitions for different use cases) 
+#SBATCH --mem=50gb ## amount of memory you need to run your job 
+#SBATCH --cpus-per-task=4 ## number of cpus
+#SBATCH --mail-type=end ## sends you an email when your job is done
+#SBATCH --mail-user=adam.sorbie@tum.de ## this is really important, you must enter a valid email address here! 
+#SBATCH --export=NONE ## whether to export the user environment or not 
+#SBATCH --time=00:30:00 ## time to reserve 
+
+## set number of threads
+export OMP_NUM_THREADS=4
+
+## load modules 
+module load python
+
+## activate conda env required to run job 
+source activate metag_prof
+
+## code goes below
+cd input || exit
+
+dirs=$(ls -d */)
+
+for i in $dirs;
+do
+    cd $i
+    outname=$(echo $i | cut -f1 -d "_")
+    raxmlHPC-PTHREADS-SSE3 -T 4 -f E -p 1234 -x 5678 -m GTRGAMMA -N 1000 -s *.fna -n ${outname}_raxml_tree_GTRG
+
+    # test code
+    # check alignment can be read and doesn't contain any duplicate characters etc
+    #raxml-ng --check --msa *.fna --model GTR+G --prefix T1
+    # run raxml-ng
+    #raxml-ng --all --bootstrap --msa *.fna --model GTR+G --tree pars{25}, rand{25} --threads 4 --seed 42 --bs-trees 1000
+    raxml-ng --evaluate --seed 1234 --log progress --threads 4 --msa *.fna --model GTR+G --tree RAxML_fastTree.${outname}_raxml_tree_GTRG --brlen scaled --prefix GTRG
+    cd ..
+done
 ```
 
 
