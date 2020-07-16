@@ -5,6 +5,7 @@ Some material adapted from: HPC Carpentry - https://hpc-carpentry.github.io/hpc-
 
 This course is an introduction to working in an HPC environment and will cover why we use this and the basics of logging in and submitting jobs.
 
+
 ## What is a cluster? 
 
 Very simply, a cluster is a group of computers connected via a very fast network connection and using special software which allows them to work as one. Each individual computers that make up a cluster is termed a node. 
@@ -142,6 +143,8 @@ If you want you can also run the next command which will allow prompt you to ent
 $ ssh-add
 ```
 
+Those of you who have access should login to the cluster now. 
+
 ## Accessing installed software and submitting jobs 
 
 On high-performance computing systems, it is often the case that no software is loaded by default. If we want to use a particular package, we will usually need to “load” it ourselves.
@@ -242,9 +245,63 @@ In my experience, most packages I need to use are not available as modules and n
 
 ### Submitting jobs and writing batch scripts
 
-Let's move on now to submitting jobs using the SLURM scheduler. In most use cases (at least for us), submitted scripts resemble bash scripts with an extra few lines at the top which tell SLURM which cluster and partition to use and how much memory you need etc. Below is an annotated example of a script I wrote recently to run RAXML, a program for inference of phylogenetic trees. 
+Let's move on now to submitting jobs using the SLURM scheduler. We will start with a very simple bash script to understand how to submit a job and the commands we can use to check the status of or cancel a job.
 
-We won't actually write and submit our own jobs today but let's go through this script line by line so you can understand what everything does. Before running your own scripts you should refer to LRZ [documentation](https://doku.lrz.de/display/PUBLIC/Running+serial+jobs+on+the+Linux-Cluster)
+### Exercise 
+
+We are going to submit a very simple test script to see how this process works in practice. 
+
+Firstly, clone the course repository with the following command: 
+
+```
+$ git clone https://github.com/adamsorbie/intro-to-HPC-course-2020.git
+```
+
+Note: Git should be available be default on most unix systems so you do not need to load a module or install anything here. 
+
+Now, let's run this scrip on the login node to see what it does. 
+
+```
+$ bash example-job.sh 
+```
+ 
+ What was your output? 
+ 
+ 
+ 
+ You should see something like this: 
+ 
+```
+This is script is running on cm2login1
+```
+
+The ```hostname```command just tells which computer you are working. You can see that we are working on one of the login nodes. 
+
+Here we should also quickly discuss the distinction between what can be run on a login node and what cannot. Small simple Bash/Python/R scripts like this are fine because they are not long running and barely require any memory. If you need to test something which might require a large amount of memory or takes longer than ~5 minutes to run then there is also a semi-interactive mode which you can use for this. 
+
+Now we are going to submit our job to the cluster. To do so, run the following: 
+
+```
+sbatch example-job.sh
+```
+
+We can check the status by using the ```squeue``` command like so:
+
+```
+$ squeue -u <username>
+```
+
+We can cancel our job using ```scancel```
+
+```
+$ scancel <jobid>
+```
+
+Now we will resubmit, letting it run this time. It might take a little while to run because there will be other jobs in the queue but once finished you should see a file called slurm-xxxxxx.out where xxxxxx will be replaced by some numbers. If you look at this file you should see the output of our bash script. You will also notice the output is different this time because this script was ran on a compute node and not the login node. 
+
+The script we ran above was very basic and we didn't specify any parameters so it just ran with the defaults. When we are conducting an analysis or running some software this is not what we want. In most use cases (at least for us), submitted scripts resemble still bash scripts but have a few extra few lines at the top which tell SLURM which cluster and partition to use and how much memory you need etc. Below is an annotated example of a script I wrote recently to run RAXML, a program for inference of phylogenetic trees. 
+
+We won't actually write and submit our own 'real' jobs today but let's go through this script line by line so you can understand what everything does. Before running your own scripts you should refer to LRZ [documentation](https://doku.lrz.de/display/PUBLIC/Running+serial+jobs+on+the+Linux-Cluster)
 
 ```
 #!/bin/bash 
@@ -292,11 +349,68 @@ do
     cd ..
 done
 ```
+### Uploading files to the cluster 
 
+You might be wondering after looking through this how we get files onto the cluster to conduct our analyses. For most use cases, we can use the command line tool ```scp``` short for secure copy protocol. It used like so:
+
+```
+$ scp file username@login.de:/home/user/data
+```
+
+We need the file path of our home directory to know where to copy to so go ahead and use ```pwd```to find this out. Now let's log out (ctrl-D) and copy a file from our local system to the cluster. 
+
+If you only recently installed the unix system you are working on you probably don't have any files yet so we firstly need to create one. 
+
+Create a file using the ```touch ``` command called test_upload.txt
+
+```
+touch test_upload.txt 
+```
+
+We will also add some text to the file
+
+```
+echo "This is a test file for uploading" >> test_upload.txt
+```
+
+Now we're going to try copying this file onto the cluster. Using the same syntax as above, we can copy the file like so (replace the file path with your pwd output):
+
+```
+scp test.txt <username>@lxlogin1.lrz.de:/dss/dsshome1/lxc##/<user_folder> 
+```
+
+### Downloading files 
+
+Downloading files follows the same principles. Log back on to the cluster and firstly check if the file we just uploaded is there using ```ls```
+If you cloned the repository correctly earlier you should also see a file in the intro-to-HPC-course folder called test_download.txt. If yes, we can log out again and proceed with downloading our test file. 
+
+Now download the test_download.txt file using the following command: 
+
+```
+scp <username>@lxlogin1.lrz.de:/dss/dsshome1/lxc##/<user_folder>/intro-to-HPC-course/test_download.txt . 
+```
+
+It's basically the same thing reversed. The ```.``` is the target and just means current directory. 
 
 ## Reponsible use 
 
+Key Points
+
+Again do not run batch jobs on the login node. Never. 
+Although in our case we do not pay for our usage, be mindful of the amount of compute time you request. The LRZ has guidelines [here](https://doku.lrz.de/display/PUBLIC/Guidelines+for+resource+selection). Even after reading these it still might be difficult to figure out how much memory or time you need. 
+Unless you have ran a job a few times it's very difficult to know how much you will need. What you can do however is when initially submiting job you can allocate more time than you think you will need just in case then use the output to check memory and time and edit your subsequent submissions accordingly you can do this with the ```sacct``` command. 
+
+``
+sacct -M clustername -j JOBID -o jobid, partition, user, start, end, elapsed, maxrss
+
+```
+
+Your data on the system is your responsibility, user directories are backed up but you only have a limit of 100gb here so if you are working with lots of data or very large files then you will need to use the SCRATCH file system. This should only really be used temporarily as it is not backed up and files on here are regularly deleted by the system administrators. 
+
+If you have to upload many files e.g. from a sequencing experiment, it's good practice to compress them into one archive and upload rather than uploading each file individually. 
 
 ## Rstudio server 
 
-This will likely be the most useful service for many of you. 
+This will likely be the most useful and familiar cluster-based service for many of you. The LRZ operates an Rstudio Server instance running on the linux cluster, which allows you to use the power of the cluster while working in a more familiar environment. Given that most of you will be somewhat familiar with Rstudio already it doesn't need much of an introduction and there are only minor differences between using Rstudio here compared to on your own computer. 
+
+You can login to this system [here](https://www.rstudio.lrz.de/) (if you have a valid LRZ account) 
