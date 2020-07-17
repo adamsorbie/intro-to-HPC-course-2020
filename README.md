@@ -6,6 +6,7 @@ Some material adapted from: HPC Carpentry - https://hpc-carpentry.github.io/hpc-
 This course is an introduction to working in an HPC environment and will cover why we use this and the basics of logging in and submitting jobs.
 
 - [intro-to-HPC-course-2020](#intro-to-hpc-course-2020)
+  * [Course Conventions](Course-conventions) 
   * [What is a cluster?](#what-is-a-cluster-)
     + [Difference between cloud computing and a cluster](#difference-between-cloud-computing-and-a-cluster)
     + [Why use a cluster?](#why-use-a-cluster-)
@@ -21,6 +22,12 @@ This course is an introduction to working in an HPC environment and will cover w
     + [Downloading files](#downloading-files)
   * [Reponsible use](#reponsible-use)
   * [Rstudio server](#rstudio-server)
+  
+## Course conventions 
+
+If at any point you have a question, feel free to interrupt and ask. 
+<xxx> This nomenclature means replace the text in between the <> with the relevant field for you i.e. <username> == ga92xxxx
+The $ sign represents the shell prompt and when shown, means these are commands you should actually enter yourself rather than representing stdout or something else.  
 
 ## What is a cluster? 
 
