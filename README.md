@@ -26,7 +26,7 @@ This course is an introduction to working in an HPC environment and will cover w
 ## Course conventions 
 
 * If at any point you have a question, feel free to interrupt and ask. 
-* <xxx> This nomenclature means replace the text in between the <> with the relevant field for you i.e. "<username>" == ga92xxxx
+* <xxx> This nomenclature means replace the text in between the <> with the relevant field for you i.e. `<username>` == ga92xxxx
 * The $ sign represents the shell prompt and when shown, means these are commands you should actually enter yourself rather than representing stdout or something else.  
 
 ## What is a cluster? 
